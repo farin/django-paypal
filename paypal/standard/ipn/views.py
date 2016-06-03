@@ -31,14 +31,14 @@ def ipn(request, item_check_callable=None):
     encoding = request.POST.get('charset', None)
 
     if encoding is None:
-        flag = "Invalid form - no charset passed, can't decode"
+        flag = u"Invalid form - no charset passed, can't decode"
         data = None
     else:
         try:
             data = QueryDict(request.body, encoding=encoding)
         except LookupError:
             data = None
-            flag = "Invalid form - invalid charset"
+            flag = u"Invalid form - invalid charset"
 
     if data is not None:
         date_fields = ('time_created', 'payment_date', 'next_payment_date',
@@ -51,11 +51,11 @@ def ipn(request, item_check_callable=None):
         if form.is_valid():
             try:
                 #When commit = False, object is returned without saving to DB.
-                ipn_obj = form.save(commit = False)
-            except Exception, e:
-                flag = "Exception while processing. (%s)" % e
+                ipn_obj = form.save(commit=False)
+            except Exception as e:
+                flag = u"Exception while processing. (%s)" % e
         else:
-            flag = "Invalid form. (%s)" % form.errors
+            flag = u"Invalid form. (%s)" % form.errors
 
     if ipn_obj is None:
         ipn_obj = PayPalIPN()
