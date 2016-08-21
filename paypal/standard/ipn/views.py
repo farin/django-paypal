@@ -54,6 +54,7 @@ def ipn(request, item_check_callable=None):
                 ipn_obj = form.save(commit=False)
             except Exception as e:
                 flag = u"Exception while processing. (%s)" % e
+
         else:
             flag = u"Invalid form. (%s)" % form.errors
 

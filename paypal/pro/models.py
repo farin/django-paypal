@@ -5,10 +5,12 @@ from django.db import models
 from django.utils.http import urlencode
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
+
 try:
     from idmapper.models import SharedMemoryModel as Model
 except ImportError:
     Model = models.Model
+
 
 class PayPalNVP(Model):
     """Record of a NVP interaction with PayPal."""
@@ -35,7 +37,7 @@ class PayPalNVP(Model):
     street = models.CharField("Street Address", max_length=255, blank=True)
     city = models.CharField("City", max_length=255, blank=True)
     state = models.CharField("State", max_length=255, blank=True)
-    countrycode = models.CharField("Country", max_length=2,blank=True)
+    countrycode = models.CharField("Country", max_length=2, blank=True)
     zip = models.CharField("Postal / Zip Code", max_length=32, blank=True)
 
     # Custom fields
@@ -47,7 +49,7 @@ class PayPalNVP(Model):
     flag = models.BooleanField(default=False, blank=True)
     flag_code = models.CharField(max_length=32, blank=True)
     flag_info = models.TextField(blank=True)
-    ipaddress = models.GenericIPAddressField(blank=True, null=True)
+    ipaddress = models.IPAddressField(blank=True)
     query = models.TextField(blank=True)
     response = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -64,7 +66,7 @@ class PayPalNVP(Model):
             self.user = request.user
 
         # No storing credit card info.
-        query_data = dict((k,v) for k, v in paypal_request.iteritems() if k not in self.RESTRICTED_FIELDS)
+        query_data = dict((k, v) for k, v in paypal_request.iteritems() if k not in self.RESTRICTED_FIELDS)
         self.query = urlencode(query_data)
         self.response = urlencode(paypal_response)
 
@@ -86,6 +88,7 @@ class PayPalNVP(Model):
     def process(self, request, item):
         """Do a direct payment."""
         from paypal.pro.helpers import PayPalWPP
+
         wpp = PayPalWPP(request)
 
         # Change the model information into a dict that PayPal can understand.
