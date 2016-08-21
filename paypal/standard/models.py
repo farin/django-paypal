@@ -3,6 +3,8 @@
 from django.db import models
 from paypal.standard.helpers import duplicate_txn_id, check_secret
 from paypal.standard.conf import RECEIVER_EMAIL, POSTBACK_ENDPOINT, SANDBOX_POSTBACK_ENDPOINT
+from paypal.standard.ipn.signals import payment_was_flagged, payment_was_successful, \
+    subscription_cancel, subscription_signup, subscription_eot, subscription_modify
 
 ST_PP_ACTIVE = 'Active'
 ST_PP_CANCELLED = 'Cancelled'
@@ -128,7 +130,7 @@ class PayPalStandardBase(Model):
     initial_payment_amount = models.DecimalField(max_digits=64, decimal_places=2, default=0, blank=True, null=True)
     next_payment_date = models.DateTimeField(blank=True, null=True, help_text="HH:MM:SS DD Mmm YY, YYYY PST")
     outstanding_balance = models.DecimalField(max_digits=64, decimal_places=2, default=0, blank=True, null=True)
-    payment_cycle = models.CharField(max_length=32, blank=True) #Monthly
+    payment_cycle = models.CharField(max_length=32, blank=True)  # Monthly
     period_type = models.CharField(max_length=32, blank=True)
     product_name = models.CharField(max_length=128, blank=True)
     product_type = models.CharField(max_length=128, blank=True)

@@ -21,7 +21,7 @@ def duplicate_txn_id(ipn_obj):
     """
 
     # get latest similar transaction(s)
-    similars = ipn_obj._default_manager.filter(txn_id=ipn_obj.txn_id).order_by('-created_at')[:1]
+    similars = type(ipn_obj)._default_manager.filter(txn_id=ipn_obj.txn_id).order_by('-created_at')[:1]
 
     if len(similars) > 0:
         # we have a similar transaction, has the payment_status changed?
